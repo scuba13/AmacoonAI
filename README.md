@@ -1,0 +1,2 @@
+# AmacoonAI
+Poc com GPT
