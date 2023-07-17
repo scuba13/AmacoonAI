@@ -1,13 +1,12 @@
 package services
 
 import (
-	"context"
-	"github.com/sashabaranov/go-openai"
-	"fmt"
-	"github.com/scuba13/AmacoonAI/config"
-	"strings"
+    "context"
+    "github.com/sashabaranov/go-openai"
+    "fmt"
+    "github.com/scuba13/AmacoonAI/config"
+    "strings"
 )
-
 
 func QueryOpenAI(prompt string, question string, config *config.Config) (string, error) {
     client := openai.NewClient(config.OpeinAIKey)
@@ -37,8 +36,9 @@ func QueryOpenAI(prompt string, question string, config *config.Config) (string,
     answer := response.Choices[0].Message.Content
     answer = strings.TrimSpace(answer)
 
+    // Imprime a quantidade de tokens da pergunta e da resposta
+    fmt.Printf("Question length: %d tokens\n", len(question))
+    fmt.Printf("Answer length: %d tokens\n", len(answer))
+
     return answer, nil
 }
-
-
-
