@@ -9,53 +9,36 @@ import (
 )
 
 
-func QueryOpenAI(prompt string, config *config.Config) (string, error) {
-	
-	client := openai.NewClient(config.OpeinAIKey)
+func QueryOpenAI(prompt string, question string, config *config.Config) (string, error) {
+    client := openai.NewClient(config.OpeinAIKey)
 
-	response, err := client.CreateCompletion(context.Background(), openai.CompletionRequest{
-		Model:     openai.GPT3TextDavinci003,
-		MaxTokens: 40,
-		Prompt:    prompt,
-	})
+    // Gera um objeto Messages com o prompt como uma mensagem do sistema e a pergunta como uma mensagem do usuário
+    messages := []openai.ChatCompletionMessage{
+        {
+            Role:    openai.ChatMessageRoleSystem,
+            Content: prompt,
+        },
+        {
+            Role:    openai.ChatMessageRoleUser,
+            Content: question,
+        },
+    }
 
-	if err != nil {
-		return "", fmt.Errorf("Error querying OpenAI API: %v", err)
-	}
+    response, err := client.CreateChatCompletion(context.Background(), openai.ChatCompletionRequest{
+        Model: openai.GPT4,  // Modifique o modelo conforme necessário
+        Messages: messages,
+    })
 
-	answer := response.Choices[0].Text
-	answer = strings.TrimSpace(answer)
+    if err != nil {
+        return "", fmt.Errorf("Error querying OpenAI API: %v", err)
+    }
 
-	return answer, nil
+    // A resposta é a última mensagem do chat, que é a resposta da IA
+    answer := response.Choices[0].Message.Content
+    answer = strings.TrimSpace(answer)
+
+    return answer, nil
 }
 
 
 
-func GeneratePrompt(context, question string) string {
-	prompt := "Responda a pergunta abaixo, somente se você tiver 100% de certeza.\n"
-	prompt += "Context: " + context + "\n"
-	prompt += "Q: " + question + "\n"
-	prompt += "A: "
-	return prompt
-}
-
-func GetEmbedding(config *config.Config, summary string) []float32 {
-	
-	client := openai.NewClient(config.OpeinAIKey)
-
-	// Configure os parâmetros da chamada de API
-	params := openai.EmbeddingRequest{
-		Model: openai.AdaEmbeddingV2,
-		Input: []string{summary},
-		User:  "Scuba13",
-	}
-
-	// Faça a chamada da API para obter os embeddings
-	embeddings, err := client.CreateEmbeddings(context.Background(), params)
-	if err != nil {
-		fmt.Printf("Error fetching embeddings: %v\n", err)
-		return nil
-	}
-
-	return embeddings.Data[0].Embedding
-}
