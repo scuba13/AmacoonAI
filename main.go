@@ -19,7 +19,7 @@ func main() {
 	
 	cfg := config.LoadConfig()
 	
-	mongo, err := config.SetupMongo(cfg)
+	mongo, err := config.SetupMongo()
 	if err != nil {
 		fmt.Printf("Error connecting to MongoDB: %v\n", err)
 		return

@@ -1,40 +1,28 @@
 package config
 
 import (
-	"fmt"
-
 	"context"
+	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func SetupMongo(config *Config) (*mongo.Client, error) {
-	// Define a string de conexão com o MongoDB
-	mongoURI := fmt.Sprintf("mongodb://%s:%s@%s:%s/%s",
-		config.MongoDBUsername,
-		config.MongoDBPassword,
-		config.MongoDBHost,
-		config.MongoDBPort,
-		config.MongoDBName,
-	)
-
-	// Define as opções de conexão com o MongoDB
+func SetupMongo() (*mongo.Client, error) {
+	mongoURI := "mongodb+srv://amacoonservice:2010mainecoon2010@amacoon.ibzyi6m.mongodb.net/?retryWrites=true&w=majority"
 	opts := options.Client().ApplyURI(mongoURI)
 
-	// Cria um contexto com timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	// Conecta ao MongoDB
 	client, err := mongo.Connect(ctx, opts)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to MongoDB: %w", err)
 	}
 
-	// Testa a conexão com o MongoDB
-	if err := client.Ping(ctx, nil); err != nil {
+	err = client.Ping(ctx, nil)
+	if err != nil {
 		return nil, fmt.Errorf("failed to ping MongoDB: %w", err)
 	}
 
