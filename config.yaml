@@ -7,5 +7,5 @@ db:
 server:
   port: 8080
 openAI:
-  key: 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
+  key: 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
 
