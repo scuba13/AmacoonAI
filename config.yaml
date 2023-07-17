@@ -14,4 +14,4 @@ main.go  name: amacoon
 server:
   port: 8080
 openAI:
-  key: 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
+  key: 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
